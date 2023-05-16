@@ -65,6 +65,9 @@ class UserService {
     socket.broadcast.emit(MSG.user["updateUserList"], {
       users: this.users,
     });
+    socket.emit(MSG.user["updateUserList"], {
+      users: this.users,
+    });
 
     return this.users;
   }
