@@ -13,13 +13,13 @@ class SocketService {
   }
 
   addSocket(socket) {
-    const existing = this.getSocket(socket.id)
-    if (existing) return
+    const existing = this.getSocket(socket.id);
+    if (existing) return;
     this.sockets.push(socket);
   }
 
   removeSocket(socketId) {
-    const filtered = this.sockets.filter((socket) => socket.id === socketId);
+    const filtered = this.sockets.filter((socket) => socket.id !== socketId);
     this.sockets = filtered;
   }
 }

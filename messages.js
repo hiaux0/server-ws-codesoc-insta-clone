@@ -17,6 +17,7 @@ module.exports.MSG = {
   user: {
     "add user": "add user",
     "change username": "change username",
+    "updateUserList": "updateUserList",
     "user already exists": "user already exists",
     "user joined": "user joined",
     "user left": "user left",

@@ -17,6 +17,16 @@ class UserService {
     this.socketService = socketService;
   }
 
+  report() {
+    console.log(
+      ">>>> USER REPORT --------------------------------------------------------------",
+    );
+    console.log(`There are ${this.users.length} users.`);
+    this.users.forEach((user, index) => {
+      console.log(`    (${index + 1}) - ${user.username} - ${user.id}`);
+    });
+  }
+
   /**
    * @param {string} usersSocketId
    */
@@ -52,6 +62,9 @@ class UserService {
       username: newUser.username,
       numUsers: this.users.length,
     });
+    socket.broadcast.emit(MSG.user["updateUserList"], {
+      users: this.users,
+    });
 
     return this.users;
   }
@@ -78,13 +91,15 @@ class UserService {
    * @param {string} userId
    */
   removeUser(userId) {
-    const updated = this.users.filter((user) => user.id === userId);
+    const socket = this.getSocketForUser(userId);
+    const user = this.getUser(userId);
+
+    const updated = this.users.filter((user) => user.id !== userId);
     this.users = updated;
 
     // echo globally that this client has left
-    const socket = this.getSocketForUser(userId);
     socket?.broadcast.emit(MSG.user["user left"], {
-      username: socket.username,
+      username: user?.username,
       numUsers: this.users.length,
     });
   }

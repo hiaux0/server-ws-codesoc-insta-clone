@@ -39,8 +39,12 @@ const socketService = new SocketService();
 const userService = new UserService(socketService);
 io.on(MSG.connection["connection"], (socket) => {
   console.log("i0 - -------------------------------------------------");
+  const currentDate = new Date()
+  console.log(currentDate.toLocaleTimeString() + ' ' + currentDate.getUTCSeconds() + 's');
+
   socketService.addSocket(socket);
   socketService.report();
+  userService.report();
 
   // when the client emits 'new message', this listens and executes
   socket.on(MSG.message["new message"], (data) => {
@@ -84,7 +88,7 @@ io.on(MSG.connection["connection"], (socket) => {
 
   // when the user disconnects.. perform this
   socket.on(MSG.connection["disconnect"], () => {
-    socketService.removeSocket(socket.id);
     userService.removeUser(socket.id);
+    socketService.removeSocket(socket.id);
   });
 });
