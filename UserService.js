@@ -33,7 +33,6 @@ class UserService {
       return;
     }
 
-    console.log("u1 - ", newUser);
     this.users.push(newUser);
 
     this.socket.emit(MSG.auth["login"], {
@@ -48,8 +47,11 @@ class UserService {
     return this.users;
   }
 
-  removeUser(username) {
-    const updated = this.users.filter((user) => user.username === username);
+  /**
+   * @param {string} userId
+   */
+  removeUser(userId) {
+    const updated = this.users.filter((user) => user.id === userId);
     this.users = updated;
 
     // echo globally that this client has left

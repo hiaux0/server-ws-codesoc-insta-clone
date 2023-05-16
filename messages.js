@@ -17,6 +17,7 @@ module.exports.MSG = {
   user: {
     "add user": "add user",
     "user already exists": "user already exists",
+    "user joined": "user joined",
     "user left": "user left",
   },
 };
