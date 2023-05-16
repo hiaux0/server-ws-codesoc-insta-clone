@@ -29,16 +29,16 @@ server.listen(port, () => {
 app.use(
   cors({
     origin: "*",
-  })
+  }),
 );
 // @ts-ignore
 app.use(express.static(path.join(__dirname, "public")));
 
 // Chatroom
 const socketService = new SocketService();
+const userService = new UserService(socketService);
 io.on(MSG.connection["connection"], (socket) => {
   console.log("i0 - -------------------------------------------------");
-  const userService = new UserService(socket);
   socketService.addSocket(socket);
   socketService.report();
 
@@ -84,7 +84,7 @@ io.on(MSG.connection["connection"], (socket) => {
 
   // when the user disconnects.. perform this
   socket.on(MSG.connection["disconnect"], () => {
-    userService.removeUser(socket.id);
     socketService.removeSocket(socket.id);
+    userService.removeUser(socket.id);
   });
 });

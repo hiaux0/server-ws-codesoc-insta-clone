@@ -7,7 +7,14 @@ class SocketService {
     console.log(`There are currently ${this.sockets.length} sockets open.`);
   }
 
+  getSocket(socketId) {
+    const target = this.sockets.find((s) => s.id === socketId);
+    return target;
+  }
+
   addSocket(socket) {
+    const existing = this.getSocket(socket.id)
+    if (existing) return
     this.sockets.push(socket);
   }
 

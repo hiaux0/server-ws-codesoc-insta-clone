@@ -5,16 +5,24 @@ const { MSG } = require("./messages");
 /**
  * @typedef {Object} User
  * @property {string} id
- * @property {string} username
+ * @property {string | null} username
  */
 
 class UserService {
   /** @type {User[]} */
   users = [];
-  socket;
+  socketService;
 
-  constructor(socket) {
-    this.socket = socket;
+  constructor(socketService) {
+    this.socketService = socketService;
+  }
+
+  /**
+   * @param {string} usersSocketId
+   */
+  getSocketForUser(usersSocketId) {
+    const target = this.socketService.getSocket(usersSocketId);
+    return target;
   }
 
   /** @param {string} id */
@@ -27,21 +35,20 @@ class UserService {
   addUser(newUser) {
     // TODO: note, this is a username check, think about relation to .id
     const alreadyExists = this.users.find((user) => user.id === newUser.id);
+    const socket = this.getSocketForUser(newUser.id);
 
     if (alreadyExists !== undefined) {
-      alreadyExists.username = this.socket.emit(
-        MSG.user["user already exists"],
-      );
+      alreadyExists.username = socket.emit(MSG.user["user already exists"]);
       return;
     }
 
     this.users.push(newUser);
 
-    this.socket.emit(MSG.auth["login"], {
+    socket.emit(MSG.auth["login"], {
       numUsers: this.users.length,
     });
     // echo globally (all clients) that a person has connected
-    this.socket.broadcast.emit(MSG.user["user joined"], {
+    socket.broadcast.emit(MSG.user["user joined"], {
       username: newUser.username,
       numUsers: this.users.length,
     });
@@ -61,7 +68,10 @@ class UserService {
       oldUsername,
       username: user.username,
     };
-    this.socket.broadcast.emit(MSG.user["change username"], payload);
+    this.getSocketForUser(user.id).broadcast.emit(
+      MSG.user["change username"],
+      payload,
+    );
   }
 
   /**
@@ -72,8 +82,9 @@ class UserService {
     this.users = updated;
 
     // echo globally that this client has left
-    this.socket.broadcast.emit(MSG.user["user left"], {
-      username: this.socket.username,
+    const socket = this.getSocketForUser(userId);
+    socket?.broadcast.emit(MSG.user["user left"], {
+      username: socket.username,
       numUsers: this.users.length,
     });
   }
