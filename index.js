@@ -57,9 +57,15 @@ io.on(MSG.connection["connection"], (socket) => {
 
   // when the client emits 'add user', this listens and executes
   socket.on(MSG.user["add user"], (username) => {
+    if (username === "") return;
     // we store the username in the socket session for this client
     socket.username = username;
     userService.addUser({ id: socket.id, username });
+  });
+
+  socket.on(MSG.user["change username"], (username) => {
+    if (username === "") return;
+    userService.changeUsername({ id: socket.id, username });
   });
 
   // when the client emits 'typing', we broadcast it to others

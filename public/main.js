@@ -250,6 +250,10 @@ $(function() {
     removeChatTyping(data);
   });
 
+  socket.on('change username', ({oldUsername, username}) => {
+    log(`${oldUsername} changed their name to ${username}.`);
+  });
+
   // Whenever the server emits 'typing', show the typing message
   socket.on('typing', (data) => {
     addChatTyping(data);

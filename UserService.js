@@ -29,7 +29,9 @@ class UserService {
     const alreadyExists = this.users.find((user) => user.id === newUser.id);
 
     if (alreadyExists !== undefined) {
-      this.socket.emit(MSG.user["user already exists"]);
+      alreadyExists.username = this.socket.emit(
+        MSG.user["user already exists"],
+      );
       return;
     }
 
@@ -45,6 +47,21 @@ class UserService {
     });
 
     return this.users;
+  }
+
+  /** @param {User} user */
+  changeUsername(user) {
+    const targetUser = this.getUser(user.id);
+    if (!targetUser) return;
+
+    const oldUsername = targetUser.username;
+    targetUser.username = user.username;
+
+    const payload = {
+      oldUsername,
+      username: user.username,
+    };
+    this.socket.broadcast.emit(MSG.user["change username"], payload);
   }
 
   /**
