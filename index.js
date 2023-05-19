@@ -39,6 +39,7 @@ const socketService = new SocketService();
 const userService = new UserService(socketService);
 io.on(MSG.connection["connection"], (socket) => {
   console.log("i0 - -------------------------------------------------");
+  /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: index.js ~ line 43 ~ socket.id', socket.id)
   const currentDate = new Date();
   console.log(
     currentDate.toLocaleTimeString() + " " + currentDate.getUTCSeconds() + "s",
@@ -47,6 +48,8 @@ io.on(MSG.connection["connection"], (socket) => {
   socketService.addSocket(socket);
   socketService.report();
   userService.report();
+
+  socket.emit(MSG.connection["connection created"], socket.id);
 
   // when the client emits 'new message', this listens and executes
   socket.on(MSG.message["new message"], (data) => {
@@ -74,7 +77,6 @@ io.on(MSG.connection["connection"], (socket) => {
   socket.on(MSG.user["add user"], (username) => {
     if (username === "") return;
     // we store the username in the socket session for this client
-    socket.username = username;
     userService.addUser({ id: socket.id, username });
   });
 
