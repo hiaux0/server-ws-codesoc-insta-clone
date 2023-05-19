@@ -60,10 +60,7 @@ io.on(MSG.connection["connection"], (socket) => {
     const receiverSocket = socketService.getSocket(receiverId);
 
     /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: index.js ~ line 63 ~ receiverSocket.id', receiverSocket.id)
-    receiverSocket.emit(MSG.message["new message"], {
-      username: socket.username,
-      message: asJson.message,
-    });
+    receiverSocket.emit(MSG.message["new message"], asJson);
     // should just tell one client
 
     // we tell the client to execute 'new message'
