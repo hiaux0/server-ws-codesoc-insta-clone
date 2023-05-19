@@ -7,6 +7,10 @@ class SocketService {
     console.log(`There are currently ${this.sockets.length} sockets open.`);
   }
 
+  /**
+   * @param {string} socketId
+   * @returns
+   */
   getSocket(socketId) {
     const target = this.sockets.find((s) => s.id === socketId);
     return target;

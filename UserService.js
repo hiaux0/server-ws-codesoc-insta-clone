@@ -83,8 +83,13 @@ class UserService {
     const payload = {
       oldUsername,
       username: user.username,
+      userId: targetUser.id,
     };
     this.getSocketForUser(user.id).broadcast.emit(
+      MSG.user["change username"],
+      payload,
+    );
+    this.getSocketForUser(user.id).emit(
       MSG.user["change username"],
       payload,
     );

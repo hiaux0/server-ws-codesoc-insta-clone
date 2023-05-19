@@ -39,8 +39,10 @@ const socketService = new SocketService();
 const userService = new UserService(socketService);
 io.on(MSG.connection["connection"], (socket) => {
   console.log("i0 - -------------------------------------------------");
-  const currentDate = new Date()
-  console.log(currentDate.toLocaleTimeString() + ' ' + currentDate.getUTCSeconds() + 's');
+  const currentDate = new Date();
+  console.log(
+    currentDate.toLocaleTimeString() + " " + currentDate.getUTCSeconds() + "s",
+  );
 
   socketService.addSocket(socket);
   socketService.report();
@@ -48,15 +50,24 @@ io.on(MSG.connection["connection"], (socket) => {
 
   // when the client emits 'new message', this listens and executes
   socket.on(MSG.message["new message"], (data) => {
-    console.log("i0.5 - New Message --------------------------");
+    console.log("i1 - New Message --------------------------");
+    const asJson = JSON.parse(data);
 
-    const author = userService.getUser(socket.id);
+    const receiverId = asJson.receiver.id;
+    const receiverSocket = socketService.getSocket(receiverId);
+
+    /* prettier-ignore */ console.log('>>>> _ >>>> ~ file: index.js ~ line 63 ~ receiverSocket.id', receiverSocket.id)
+    receiverSocket.emit(MSG.message["new message"], {
+      username: socket.username,
+      message: asJson.message,
+    });
+    // should just tell one client
 
     // we tell the client to execute 'new message'
-    socket.broadcast.emit(MSG.message["new message"], {
-      username: socket.username,
-      message: data,
-    });
+    // socket.broadcast.emit(MSG.message["new message"], {
+    //   username: socket.username,
+    //   message: data,
+    // });
   });
 
   // when the client emits 'add user', this listens and executes
